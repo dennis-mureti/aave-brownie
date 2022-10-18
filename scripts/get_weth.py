@@ -15,5 +15,5 @@ def get_weth():
     # now we call the deposit function
     tx = weth.deposit({"from": account, "value": 0.1 * 10 ** 18})
     tx.wait(1)
-    print("received 0.1 WETH")
+    print("Received 0.1 WETH")
     return tx
