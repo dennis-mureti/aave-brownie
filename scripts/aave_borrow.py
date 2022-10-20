@@ -28,6 +28,12 @@ def main():
     print("let'sborrow!")
     # DAI in terms of ETH
     dai_eth_price  = get_asset_price(config["networkds"][network.show_active()["dai_eth_price_feed"]])
+    #  borrowable_eth -> borrowable_dai * 95%
+    amount_dai_to_borrow = (1 / dai_eth_price) * (borrowable_eth * 0.95) # to calculate the amount of dai we want to borrow
+    print (F"we are going to borrow {amount_dai_to_borrow} DAI")
+    # now we will borrow
+    dai_address = config
+    borrow_tx = lending_pool.borrow()
 
     dai_eth_price = get_asset_price(dai_eth_price_feed)
 
@@ -36,8 +42,9 @@ def get_asset_price(price_feed_address):
     # address
     dat_eth_price_feed = interface.AggregatorV3Interface(price_feed_address)
     latest_price = dai_eth_price_feed.latestRoundData()[1]
+    converted_latest_price = Web3.fromWei(latest_price, "ether")
     print(f"The DAI/ETH price is {latest_price}")
-    return (float(latest_price)) 
+    return (float(converted_latest_price)) 
 
 
 def get_borowable_data(lending_pool, account):
