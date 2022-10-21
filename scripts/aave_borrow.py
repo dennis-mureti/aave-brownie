@@ -9,7 +9,7 @@ amount = Web3.toWei(0.1, "ether")
 
 def main():
     account = get_account()
-    erc2_address = config["networks"][network.show_active()]["weth_token"]
+    erc20_address = config["networks"][network.show_active()]["weth_token"]
     if network.show_active() in ["mainnet-fork"]:
         get_weth()
     # ABI
@@ -32,19 +32,27 @@ def main():
     amount_dai_to_borrow = (1 / dai_eth_price) * (borrowable_eth * 0.95) # to calculate the amount of dai we want to borrow
     print (F"we are going to borrow {amount_dai_to_borrow} DAI")
     # now we will borrow
-    dai_address = config
-    borrow_tx = lending_pool.borrow()
+    dai_address = config["networks"][network.show_active()]["dai_token"]
+    borrow_tx = lending_pool.borrow(dai_address, Web3.toWei(amount_dai_to_borrow, "ether"),
+    1,
+    0,
+    account.address,
+    {"from": account},
+    )
+    borrow_tx.wait(1)
+    print("We borrowed some DAI!")
+    get_borrowable_data(lending_pool, account)
 
     dai_eth_price = get_asset_price(dai_eth_price_feed)
 
 def get_asset_price(price_feed_address):
     # ABI
     # address
-    dat_eth_price_feed = interface.AggregatorV3Interface(price_feed_address)
+    dai_eth_price_feed = interface.AggregatorV3Interface(price_feed_address)
     latest_price = dai_eth_price_feed.latestRoundData()[1]
     converted_latest_price = Web3.fromWei(latest_price, "ether")
     print(f"The DAI/ETH price is {latest_price}")
-    return (float(converted_latest_price)) 
+    return (float(converted_latest_price))
 
 
 def get_borowable_data(lending_pool, account):
