@@ -84,7 +84,7 @@ def get_asset_price(price_feed_address):
     return float(converted_latest_price)
 
 
-def get_borowable_data(lending_pool, account):
+def get_borrowable_data(lending_pool, account):
     (
         total_collateral_eth,
         total_debt_eth,
